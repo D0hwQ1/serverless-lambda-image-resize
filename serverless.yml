@@ -1,0 +1,23 @@
+service: serverless-lambda-edge-image-resize
+frameworkVersion: "3"
+plugins:
+  - serverless-lambda-edge-pre-existing-cloudfront
+  - serverless-ignore
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iam:
+    role: arn:aws:iam::667833941706:role/role-lambda-edge-image-resize
+
+functions:
+  imageResize:
+    name: "serverless-lambda-edge-image-resize"
+    handler: index.imageResize #index.js 파일의 imageResize 함수를 바라본다
+    events:
+      - preExistingCloudFront:
+          distributionId: E1OZ87X7IOD1IG #s3-lambda-edge-image-resize의 cloudfront id값 입력
+          eventType: origin-response
+          pathPattern: "*"
+          includeBody: false
