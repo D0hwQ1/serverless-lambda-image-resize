@@ -1,0 +1,12 @@
+node_modules/aws-sdk/*
+
+form
+output
+Dockerfile
+index-local.js
+README.md
+
+.env.exmaple
+.git
+.serverless
+.dockerignore
