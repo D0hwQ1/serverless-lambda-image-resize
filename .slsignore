@@ -1,0 +1,13 @@
+index-local.js
+form
+output
+Dockerfile
+README.md
+package-lock.json
+serverless.yml
+
+.env.exmaple
+.env
+.git
+.serverless
+.dockerignore
