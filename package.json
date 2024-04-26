@@ -1,0 +1,24 @@
+{
+  "name": "serverless-lambda-edge-image-resize",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "<!-- title: 'AWS NodeJS Example' description: 'This template demonstrates how to deploy a NodeJS function running on AWS Lambda using the traditional Serverless Framework.' layout: Doc framework: v3 platform: AWS language: nodeJS priority: 1 authorLink: 'https://github.com/serverless' authorName: 'Serverless, inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm uni sharp; npm i sharp@0.30.0",
+    "start": "run-func index-local.js imageResizeToFile",
+    "predeploy": "npm uni sharp; npm i --cpu=x64 --os=linux sharp@0.30.0",
+    "deploy": "serverless deploy"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-ignore": "^0.2.1",
+    "serverless-lambda-edge-pre-existing-cloudfront": "^1.2.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.556.0",
+    "run-func": "^3.0.0",
+    "sharp": "^0.30.0"
+  }
+}
