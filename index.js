@@ -1,6 +1,7 @@
 "use strict";
 
 import Sharp from "sharp";
+import gifResize from "@gumlet/gif-resize";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 const S3 = new S3Client({
   region: "ap-northeast-2",
@@ -71,30 +72,15 @@ export const imageResize = async (event, context) => {
 
   //이미지 리사이즈 수행
   const s3Uint8ArrayData = await s3Object.Body.transformToByteArray();
+  console.log("s3Uint8ArrayData", s3Uint8ArrayData);
 
   let resizedImage = null;
 
-  //gif는 sharp라이브러리 자체 이슈 존재. 리사이징하지 않고 바로 원본 반환
-  if (extension === "gif") {
-    try {
-      const webpImage = await Sharp(s3Uint8ArrayData).webp({ quality: quality, lossless: false, effort: 4 }).toBuffer();
-      console.log("GIF to WebP conversion success");
-
-      // Resize the WebP image
-      resizedImage = await Sharp(webpImage)
-        .resize({
-          width: width,
-          height: height,
-          fit: fit,
-        })
-        .toBuffer();
-      console.log("WebP Resize Success");
-    } catch (err) {
-      console.log("GIF to WebP conversion or Resize Fail!! \n" + "Bucket: " + s3BucketName + ", Path: " + s3Path + "\n" + "err: " + err);
-      return err;
-    }
-  } else {
-    try {
+  try {
+    if (extension === "gif") {
+      console.log("extension is gif!!");
+      resizedImage = await gifResize({ width, height })(Buffer.from(s3Uint8ArrayData));
+    } else
       resizedImage = await Sharp(s3Uint8ArrayData)
         .resize({
           width: width,
@@ -105,11 +91,10 @@ export const imageResize = async (event, context) => {
           quality: quality,
         })
         .toBuffer();
-      console.log("Sharp Resize Success");
-    } catch (err) {
-      console.log("Sharp Resize Fail!! \n" + "Bucket: " + s3BucketName + ", Path: " + s3Path + "\n" + "err: " + err);
-      return err;
-    }
+    console.log("Sharp Resize Success");
+  } catch (err) {
+    console.log("Sharp Resize Fail!! \n" + "Bucket: " + s3BucketName + ", Path: " + s3Path + "\n" + "err: " + err);
+    return err;
   }
 
   //람다엣지에서 응답을 만드는 경우, 응답할 수 있는 body에 크기제한이 있다.
@@ -129,13 +114,4 @@ export const imageResize = async (event, context) => {
   response.bodyEncoding = "base64";
   console.log("imageResize 종료!!");
   return response;
-};
-
-const streamToBuffer = (stream) => {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    stream.on("data", (chunk) => chunks.push(chunk));
-    stream.on("error", reject);
-    stream.on("end", () => resolve(Buffer.concat(chunks)));
-  });
 };
