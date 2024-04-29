@@ -79,7 +79,7 @@ export const imageResize = async (event, context) => {
   try {
     if (extension === "gif") {
       console.log("extension is gif!!");
-      resizedImage = await gifResize({ width, height })(Buffer.from(s3Uint8ArrayData));
+      resizedImage = await gifResize({ width: Math.floor(width / 2), height })(Buffer.from(s3Uint8ArrayData));
     } else
       resizedImage = await Sharp(s3Uint8ArrayData)
         .resize({
