@@ -13,7 +13,7 @@ export const imageResizeToFile = async (event, context) => {
   const response = await imageResize(event, context);
   console.log("===============================");
 
-  const buf = new Buffer(response.body, "base64");
+  const buf = Buffer.from(response.body, "base64");
   fs.writeFile(`output/image.${extension}`, buf, function (err, result) {
     if (err) {
       console.log("error", err);
