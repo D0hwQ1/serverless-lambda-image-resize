@@ -1,8 +1,8 @@
 "use strict";
 
-import { imageResize } from "./index.js";
-import eventJson from "./form/OriginResponseEvent.json" assert { type: "json" };
 import fs from "fs";
+import eventJson from "./form/OriginResponseEvent.json" with { type: "json" };
+import { imageResize } from "./index.js";
 
 export const imageResizeToFile = async (event, context) => {
   console.log("imageResizeToFile start!!");
@@ -22,3 +22,5 @@ export const imageResizeToFile = async (event, context) => {
 
   console.log("imageResizeToFile end!!");
 };
+
+imageResizeToFile();
